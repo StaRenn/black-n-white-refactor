@@ -1,4 +1,4 @@
-import "../styles/main.css";
+import "../styles/main.sass";
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import {scrollToSmoothly} from "./helpers"

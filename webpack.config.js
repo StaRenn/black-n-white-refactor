@@ -1,17 +1,25 @@
+require("babel-polyfill");
+
 const path = require("path");
 const autoprefixer = require('autoprefixer');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: "./src/js/index.js",
+    entry: ["babel-polyfill","./src/js/index.js"],
 
     output: {
         filename: "bundle.js",
+        publicPath: "/public",
         path: path.resolve(__dirname, "public")
     },
 
     devtool: "eval",
     devServer: {
+        proxy: [{
+            path: "/api/",
+            target: "http://localhost:3001"
+        }],
         inline: true,
         hot: true,
         historyApiFallback: true
@@ -30,7 +38,7 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,
+                test: /\.sass|scss|css$/i,
                 use: ExtractTextPlugin.extract({
                     fallback: "style-loader",
                     use: [
@@ -42,19 +50,22 @@ module.exports = {
                             options:{
                                 plugins: [
                                     autoprefixer({
-                                        overrideBrowserslist: ['last 4 version']
+                                        overrideBrowserslist: ["last 4 versions"]
                                     })
                                 ]
                             }
                         },
+                        "sass-loader"
                     ]
-            })},
+                })},
             {
                 test: /\.(jpe?g|png|gif|woff|woff2|eot|ttf|svg)(\?[a-z0-9=.]+)?$/,
-                loader: 'url-loader?limit=100000' }
+                loader: 'url-loader?limit=100000'
+            }
         ],
     },
     plugins: [
-        new ExtractTextPlugin({filename: 'style.css'})
+        new ExtractTextPlugin({filename: 'style.css'}),
+        new HtmlWebpackPlugin()
     ]
 };
